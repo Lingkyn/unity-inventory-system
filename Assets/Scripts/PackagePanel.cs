@@ -47,7 +47,7 @@ public class PackagePanel : BasePanel
         InitClick();
     }
 
-    private void RefreshUI()
+    public void RefreshUI()
     {
         RefreshScroll();
     }
@@ -98,8 +98,7 @@ public class PackagePanel : BasePanel
         UITabName = transform.Find("LeftTop/TabName");
 
 
-        //Right Top
-        UILeftBtn = transform.Find("RightTop/NumText");
+        //Right Top（NumText 若需单独引用可增加 UINumText 变量）
         UICloseBtn = transform.Find("RightTop/CloseBtn");
 
         //Center

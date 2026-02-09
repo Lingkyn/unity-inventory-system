@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
-public class UIManager
+public class UIManager : MonoBehaviour
 {
     private static UIManager _instance;
     private Transform _uiRoot;
@@ -18,7 +20,13 @@ public class UIManager
         {
             if (_instance == null)
             {
-                _instance = new UIManager();
+                _instance = FindAnyObjectByType<UIManager>();
+                if (_instance == null)
+                {
+                    GameObject go = new GameObject("UIManager");
+                    _instance = go.AddComponent<UIManager>();
+                    DontDestroyOnLoad(go);
+                }
             }
             return _instance;
         }
@@ -30,22 +38,42 @@ public class UIManager
         {
             if (_uiRoot == null)
             {
-                if (GameObject.Find("Canvas"))
+                // 按优先级查找场景中的 Canvas，与 Hierarchy 中命名一致（UICanvas / PackageCanvas）
+                string[] canvasNames = { "Canvas", "UICanvas", "PackageCanvas" };
+                foreach (string canvasName in canvasNames)
                 {
-                    _uiRoot = GameObject.Find("Canvas").transform;
+                    GameObject canvasObj = GameObject.Find(canvasName);
+                    if (canvasObj != null)
+                    {
+                        _uiRoot = canvasObj.transform;
+                        break;
+                    }
                 }
-                else
+                if (_uiRoot == null)
                 {
-                    _uiRoot = new GameObject("Canvas").transform;
+                    GameObject go = new GameObject("Canvas");
+                    go.AddComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
+                    go.AddComponent<CanvasScaler>();
+                    go.AddComponent<GraphicRaycaster>();
+                    _uiRoot = go.transform;
                 }
-            };
+            }
             return _uiRoot;
         }
     }
 
-    private UIManager()
+    private void Awake()
     {
-        InitDicts();
+        if (_instance == null)
+        {
+            _instance = this;
+            DontDestroyOnLoad(gameObject);
+            InitDicts();
+        }
+        else if (_instance != this)
+        {
+            Destroy(gameObject);
+        }
     }
 
     private void InitDicts()
@@ -57,6 +85,14 @@ public class UIManager
         {
             {UIConst.PackagePanel, "Package/PackagePanel"},
         };
+    }
+
+    private void Start()
+    {
+        if (pathDict == null)
+        {
+            InitDicts();
+        }
     }
 
     public BasePanel GetPanel(string name)
@@ -93,8 +129,12 @@ public class UIManager
         if (!prefabDict.TryGetValue(name, out panelPrefab))
         {
             string realPath = "Prefabs/Panel/" + path;
-
             panelPrefab = Resources.Load<GameObject>(realPath) as GameObject;
+            if (panelPrefab == null)
+            {
+                Debug.LogError("UIManager.OpenPanel: 无法加载预制件: " + realPath);
+                return null;
+            }
             prefabDict.Add(name, panelPrefab);
         }
 
@@ -119,7 +159,11 @@ public class UIManager
         // panelDict.Remove(name);
         return true;
     }
+}
 
+public enum PanelType
+{
+    PackagePanel
 }
 
 public class UIConst
