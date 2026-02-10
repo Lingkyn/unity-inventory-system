@@ -2,7 +2,7 @@
 
 本仓库提供一套可复用的 Unity 背包/收集系统，采用模块化 UI 架构。流程为：**场景拾取** → **分类浏览** → **详情展示**，背包数据通过 PlayerPrefs 持久化。当前示例内容为 Mosaic Shorelines 海岸线生态物品。
 
----
+
 
 ## 功能特性
 
@@ -13,11 +13,11 @@
 
 ## 环境要求
 
-| 依赖 | 说明 |
-|------|------|
-| Unity | 6000.x（或与目标项目版本一致） |
-| TextMeshPro / Unity UI | 工程内已包含 |
-| Canvas | 场景中须存在 Canvas（或 `UICanvas` / `PackageCanvas`）；否则由 UIManager 自动创建 |
+| 依赖                   | 说明                                                                              |
+| ---------------------- | --------------------------------------------------------------------------------- |
+| Unity                  | 6000.x（或与目标项目版本一致）                                                    |
+| TextMeshPro / Unity UI | 工程内已包含                                                                      |
+| Canvas                 | 场景中须存在 Canvas（或 `UICanvas` / `PackageCanvas`）；否则由 UIManager 自动创建 |
 
 ## 快速开始
 
@@ -27,7 +27,7 @@
 
 3. 在场景中点击可拾取物将其加入背包，再通过界面上的背包按钮打开背包进行查看。
 
----
+
 
 ## 集成与扩展
 
@@ -56,12 +56,12 @@
 
 ### 4. 代码 API
 
-| 功能 | 调用方式 |
-|------|----------|
-| 向背包添加物品 | `GameManager.Instance.AddItemToPackage(id, num)` |
-| 获取当前背包数据 | `GameManager.Instance.GetPackageLocalData()` |
-| 根据 id 查询物品表 | `GameManager.Instance.GetPackageItemById(id)` |
-| 清空存档数据 | `GameManager.Instance.ClearGameData()` |
+| 功能               | 调用方式                                         |
+| ------------------ | ------------------------------------------------ |
+| 向背包添加物品     | `GameManager.Instance.AddItemToPackage(id, num)` |
+| 获取当前背包数据   | `GameManager.Instance.GetPackageLocalData()`     |
+| 根据 id 查询物品表 | `GameManager.Instance.GetPackageItemById(id)`    |
+| 清空存档数据       | `GameManager.Instance.ClearGameData()`           |
 
 背包中的每条记录为 `PackageLocalItem`（含 uid、id、num）；相同 id 的数量会累加。持久化使用的 PlayerPrefs 键为 `"PackageLocalData"`，由 **PackageLocalData** 单例负责读写。
 
@@ -75,21 +75,21 @@ GameManager.Instance.AddItemToPackage(itemId: 1, num: 3);
 var list = GameManager.Instance.GetPackageLocalData();
 ```
 
----
+
 
 ## 核心脚本与职责
 
-| 脚本 | 职责说明 |
-|------|----------|
-| **GameManager** | 加载物品表、读写背包数据、提供 AddItem 与清档接口 |
-| **PackageLocalData** | 单例，使用 JSON 序列化并通过 PlayerPrefs 读写 |
-| **PackageTable** | ScriptableObject，定义物品表结构及条目 |
-| **PackagePanel / PackageCell / PackageDetail** | 背包界面：列表、格子与详情展示 |
-| **WorldPickup** | 场景内可拾取物体的逻辑与交互 |
-| **OpenPanelButton** | 根据配置打开指定 UI 面板（如背包） |
-| **UIManager** | 管理面板加载与预制体路径配置 |
+| 脚本                                           | 职责说明                                          |
+| ---------------------------------------------- | ------------------------------------------------- |
+| **GameManager**                                | 加载物品表、读写背包数据、提供 AddItem 与清档接口 |
+| **PackageLocalData**                           | 单例，使用 JSON 序列化并通过 PlayerPrefs 读写     |
+| **PackageTable**                               | ScriptableObject，定义物品表结构及条目            |
+| **PackagePanel / PackageCell / PackageDetail** | 背包界面：列表、格子与详情展示                    |
+| **WorldPickup**                                | 场景内可拾取物体的逻辑与交互                      |
+| **OpenPanelButton**                            | 根据配置打开指定 UI 面板（如背包）                |
+| **UIManager**                                  | 管理面板加载与预制体路径配置                      |
 
----
+
 
 ## 素材与致谢
 
